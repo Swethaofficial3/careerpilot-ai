@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CareerPilot AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0B1030;--card:#151B45;--line:#262E66;--tx:#EAF0FF;--mut:#9AA7D6;--sky:#5BC8F5;--sun:#FFC857;--mint:#5EE6A8;--red:#FF6B7A}
+*{box-sizing:border-box;margin:0}
+body{font-family:Sora,system-ui,sans-serif;background:radial-gradient(circle at 70% -10%,#1C2A7A 0,var(--bg) 55%);color:var(--tx);min-height:100vh;line-height:1.5}
+.page{display:none;padding:24px 18px 90px;max-width:980px;margin:auto}.page.on{display:block}
+h1{font-size:clamp(2rem,6vw,3.6rem);font-weight:800;line-height:1.1}h2{font-size:1.3rem;margin-bottom:12px}
+.mut{color:var(--mut)}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px}
+.btn{background:var(--sky);color:#06122e;border:0;border-radius:12px;padding:12px 22px;font:600 1rem Sora,sans-serif;cursor:pointer}
+.btn:disabled{opacity:.5}
+input,select{width:100%;padding:12px;margin:6px 0 14px;background:#0E1438;border:1px solid var(--line);border-radius:10px;color:var(--tx);font:inherit}
+:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
+#p-welcome{min-height:100vh;display:none;flex-direction:column;justify-content:center;text-align:center}#p-welcome.on{display:flex}
+.sky{position:relative;height:200px;margin:10px auto;width:min(450px,100%)}
+.sky svg{width:100%;height:100%}.sky path{fill:none;stroke:var(--sky);stroke-width:2;stroke-dasharray:6 8;opacity:.7}
+.plane{position:absolute;left:0;top:0;font-size:2rem;offset-path:path('M0,170 C150,0 300,200 440,30');offset-rotate:auto;animation:fly 4s ease-in-out forwards}
+@keyframes fly{from{offset-distance:0}to{offset-distance:100%}}
+.bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden;max-width:300px;margin:18px auto 0}
+.bar i{display:block;height:100%;background:var(--sky);width:0}.load i{animation:fill 4.6s linear forwards}
+@keyframes fill{to{width:100%}}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}.chip input{display:none}
+.chip span{display:block;padding:8px 14px;border:1px solid var(--line);border-radius:20px;cursor:pointer}
+.chip input:checked+span{background:var(--sky);color:#06122e;border-color:var(--sky)}
+.opt{display:block;width:100%;text-align:left;margin-top:8px;padding:12px;background:#0E1438;border:1px solid var(--line);border-radius:10px;color:var(--tx);font:inherit;cursor:pointer}
+.opt.sel{border-color:var(--sky);background:#17307a}
+.tag{font-size:.8rem;color:var(--sky)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat b{display:block;font-size:2rem}.streak{border-color:var(--sun)}.streak b{color:var(--sun)}
+.badge{display:inline-block;padding:4px 10px;margin:4px 4px 0 0;border-radius:20px;border:1px solid var(--line);color:var(--mut);font-size:.85rem}.badge.on{border-color:var(--sun);color:var(--sun)}
+.week{display:flex;gap:8px;align-items:flex-end;height:130px}.week div{flex:1;text-align:center;font-size:.75rem;color:var(--mut)}
+.week i{display:block;background:var(--sky);border-radius:6px 6px 0 0;min-height:3px}
+.gap{margin:10px 0}.gap .tr{height:8px;background:var(--line);border-radius:8px;position:relative}.gap .me{height:100%;background:var(--mint);border-radius:8px}.gap .need{position:absolute;top:-4px;width:3px;height:16px;background:var(--sun)}
+.step{border-left:3px solid var(--sky);padding:0 0 18px 16px;margin-left:8px;position:relative}.step:before{content:'';position:absolute;left:-8px;top:2px;width:13px;height:13px;border-radius:50%;background:var(--sky)}
+.wrong{border-left:3px solid var(--red);padding:8px 12px;margin:10px 0;background:#0E1438;border-radius:8px}.ok{color:var(--mint)}.bad{color:var(--red)}
+details{border-top:1px solid var(--line);padding:10px 0}summary{cursor:pointer;font-weight:600}
+#chatbtn{display:none;position:fixed;right:18px;bottom:18px;width:58px;height:58px;border-radius:50%;border:0;background:linear-gradient(135deg,var(--sky),#8B7BFF);font-size:1.6rem;cursor:pointer;z-index:5}
+#chat{display:none;position:fixed;right:12px;bottom:84px;width:min(380px,calc(100vw - 24px));height:min(520px,70vh);background:var(--card);border:1px solid var(--line);border-radius:18px;flex-direction:column;z-index:5;overflow:hidden}
+#chat.on{display:flex}#chat header{padding:14px;background:linear-gradient(135deg,#1c3a8a,#4B3FB8);font-weight:600}
+#msgs{flex:1;overflow:auto;padding:12px}.m{max-width:85%;padding:10px 12px;margin:6px 0;border-radius:14px;font-size:.92rem}
+.m.u{background:var(--sky);color:#06122e;margin-left:auto}.m.b{background:#0E1438;border:1px solid var(--line)}
+#chat form{display:flex;gap:6px;padding:10px}#chat input{margin:0}
+@media(prefers-reduced-motion:reduce){.plane,.load i{animation-duration:.01s}}
+</style></head><body>
+
+<section class="page on" id="p-welcome">
+  <p class="mut">CareerPilot AI</p>
+  <h1>Welcome to CareerPilot AI</h1>
+  <p class="mut" style="margin-top:12px;font-size:1.1rem">Know where you stand. Find your skill gaps. Fly the right career path.</p>
+  <div class="sky"><svg viewBox="0 0 450 200"><path d="M0,170 C150,0 300,200 440,30"/></svg><span class="plane">✈️</span></div>
+  <div class="bar load"><i></i></div><p class="mut" style="margin-top:8px">Preparing your flight…</p>
+  <div><button class="btn" style="margin-top:18px" onclick="show('p-details')">Start now</button></div>
+</section>
+
+<section class="page" id="p-details">
+  <h1 style="font-size:2rem">Tell us about you</h1><p class="mut" style="margin:6px 0 18px">We build your mock test and roadmap from this.</p>
+  <form class="card" id="f">
+    <label>Full name<input name="name" required></label>
+    <label>Email<input name="email" type="email" id="em" required></label>
+    <label>College / branch<input name="college"></label>
+    <label>Career goal<select name="goal"><option>Data Scientist</option><option>ML Engineer</option><option>Full-Stack Developer</option><option>Data Analyst</option><option>Software Engineer</option><option>Not sure yet</option></select></label>
+    <p>Your skills</p><div class="chips" id="chips"></div>
+    <label>Upload resume (PDF or TXT, optional)<input type="file" name="resume" accept=".pdf,.txt"></label>
+    <button class="btn" id="go">Start my mock test</button>
+  </form>
+</section>
+
+<section class="page" id="p-test">
+  <h1 style="font-size:2rem">Mock test</h1><p class="mut" id="cnt"></p>
+  <div class="bar" style="max-width:none"><i id="pb"></i></div><div id="qs" style="margin-top:16px"></div>
+  <button class="btn" id="sub">Submit test</button>
+</section>
+
+<section class="page" id="p-dash"></section>
+
+<button id="chatbtn" onclick="$('#chat').classList.toggle('on')" aria-label="AI assistant">💬</button>
+<div id="chat"><header>🤖 CareerPilot Assistant<br><small>Ask any doubt. I keep it simple.</small></header>
+<div id="msgs"><div class="m b">Hi! Ask me about any topic, test question, or career step.</div></div>
+<form onsubmit="ask(event)"><input id="ci" placeholder="Type your doubt…" autocomplete="off"><button class="btn">Send</button></form></div>
+
+<script>
+const $=s=>document.querySelector(s), api=(u,o)=>fetch(u,o).then(r=>r.json());
+const SK=["Python","Machine Learning","Web Development","SQL","DSA"];
+let uid=localStorage.uid, Q=[], A={};
+const show=id=>{document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on',p.id===id));scrollTo(0,0)};
+const md=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/^\s*[-*] (.+)$/gm,'• $1').replace(/\n/g,'<br>');
+$('#chips').innerHTML=SK.map(s=>`<label class="chip"><input type="checkbox" value="${s}"><span>${s}</span></label>`).join('');
+$('#em').value=localStorage.email||'';
+setTimeout(()=>{if($('#p-welcome').classList.contains('on'))show('p-details')},4800);
+
+$('#f').onsubmit=async e=>{e.preventDefault();const fd=new FormData(e.target);
+  fd.set('skills',JSON.stringify([...document.querySelectorAll('.chip input:checked')].map(i=>i.value)));
+  $('#go').disabled=true;$('#go').textContent='Reading your profile…';
+  const r=await api('/api/login',{method:'POST',body:fd});uid=r.uid;localStorage.uid=uid;localStorage.email=fd.get('email');
+  $('#go').disabled=false;$('#go').textContent='Start my mock test';startTest()};
+
+async function startTest(){const r=await api('/api/test/'+uid);Q=r.questions;A={};$('#chatbtn').style.display='block';
+  $('#qs').innerHTML=Q.map((q,n)=>`<div class="card"><span class="tag">${q.skill}</span><p><b>Q${n+1}.</b> ${q.q}</p>
+   ${q.options.map((o,i)=>`<button class="opt" data-q="${q.id}" data-i="${i}">${o}</button>`).join('')}</div>`).join('');
+  document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{A[b.dataset.q]=+b.dataset.i;
+    document.querySelectorAll(`.opt[data-q="${b.dataset.q}"]`).forEach(x=>x.classList.toggle('sel',x===b));prog()});
+  prog();show('p-test')}
+function prog(){const n=Object.keys(A).length;$('#cnt').textContent=`${n} of ${Q.length} answered`;$('#pb').style.width=(100*n/Q.length)+'%'}
+$('#sub').onclick=async()=>{const answers={};Q.forEach(q=>answers[q.id]=A[q.id]??-1);
+  $('#sub').disabled=true;await api('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:+uid,answers})});
+  $('#sub').disabled=false;dash(true)};
+
+async function dash(fresh){const d=await api('/api/dashboard/'+uid);$('#chatbtn').style.display='block';
+  const last=d.last,pct=last?Math.round(100*last.score/last.total):0;
+  const gap=(d.gap||[]).map(g=>`<div class="gap"><small>${g.skill} — you ${g.you}/10, need ${g.need}/10 ${g.you>=g.need?'<span class="ok">✔ ready</span>':'<span class="bad">gap '+(g.need-g.you).toFixed(1)+'</span>'}</small>
+    <div class="tr"><div class="me" style="width:${g.you*10}%"></div><div class="need" style="left:${g.need*10}%"></div></div></div>`).join('');
+  $('#p-dash').innerHTML=`
+  <h1 style="font-size:2rem">${fresh?'Test submitted! ':''}Hi ${d.name} 👋</h1>
+  <p class="mut" style="margin-bottom:16px">Level: <b>${d.level||'—'}</b> · Goal: ${d.goal}</p>
+  <div class="grid">
+   <div class="card stat"><span class="mut">Latest score</span><b>${last?last.score+'/'+last.total:'—'}</b>${pct}%</div>
+   <div class="card stat streak"><span class="mut">Daily streak</span><b>🔥 ${d.streak}</b>${d.today_done?'Today done ✔':'Test today to keep it!'}</div>
+   <div class="card stat"><span class="mut">Average</span><b>${d.avg}%</b>${d.attempts} tests</div></div>
+  <div class="card streak"><h2>Streak rewards</h2>${[3,7,14,30].map(n=>`<span class="badge ${d.streak>=n?'on':''}">${d.streak>=n?'🏅':'🔒'} ${n}-day streak</span>`).join('')}
+   <p class="mut" style="margin-top:8px">Come back every day. Missing a day resets your flame.</p></div>
+  <div class="card"><h2>Last 7 days</h2><div class="week">${d.week.map(w=>`<div><i style="height:${w.pct}px" title="${w.tests} test(s)"></i>${w.pct}%<br>${w.day}</div>`).join('')}</div></div>
+  <button class="btn" onclick="startTest()" style="margin-bottom:16px">Take a new mock test</button>
+  ${d.top?`<div class="card"><h2>Career recommendation: ${d.top}</h2>
+   ${d.careers.map(c=>`<p>${c.name} — <b>${c.prob}%</b> match</p>`).join('')}
+   <p class="mut" style="margin-top:8px">Model votes: ${Object.entries(d.votes).map(([k,v])=>`${k}: ${v}`).join(' · ')}</p></div>
+  <div class="card"><h2>Skill-gap analysis</h2><p class="mut">Green = your level. Yellow line = what ${d.top} needs.</p>${gap}</div>
+  <div class="card"><h2>Your roadmap to ${d.top}</h2>${d.roadmap.map(s=>`<div class="step"><b>${s[0]}</b><br><span class="mut">${s[1]}</span></div>`).join('')}</div>`:''}
+  <div class="card"><h2>Previous attempts</h2>${d.history.map(h=>`<details><summary>${h.day} — ${h.score}/${h.total} · ${h.wrong.length} wrong</summary>
+   ${h.wrong.length?h.wrong.map(w=>`<div class="wrong"><b>${w.q}</b><br><span class="bad">Your answer: ${w.chosen<0?'Not answered':w.options[w.chosen]}</span><br><span class="ok">Correct: ${w.options[w.answer]}</span></div>`).join(''):'<p class="ok">Perfect score. Nothing wrong!</p>'}</details>`).join('')||'<p class="mut">No attempts yet.</p>'}</div>`;
+  show('p-dash')}
+
+async function ask(e){e.preventDefault();const t=$('#ci').value.trim();if(!t)return;$('#ci').value='';
+  const add=(c,h)=>{$('#msgs').insertAdjacentHTML('beforeend',`<div class="m ${c}">${h}</div>`);$('#msgs').scrollTop=1e9};
+  add('u',md(t));add('b','Thinking…');
+  const r=await api('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:t})});
+  $('#msgs').lastElementChild.innerHTML=md(r.reply);$('#msgs').scrollTop=1e9}
+</script></body></html>
